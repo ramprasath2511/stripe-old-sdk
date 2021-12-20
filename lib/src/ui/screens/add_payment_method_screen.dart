@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         /// A new payment method has been attached, so refresh the store.
         await widget._paymentMethodStore.refresh();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Payment method successfully added.")));
-        Navigator.pop(context, paymentMethod['id']);
+        Navigator.pop(context, jsonEncode(paymentMethod));
         return;
       } else {
         ScaffoldMessenger.of(context)
@@ -144,7 +145,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     } else {
       paymentMethod = await (widget._paymentMethodStore.attachPaymentMethod(paymentMethod['id']));
       hideProgressDialog(context);
-      Navigator.pop(context, paymentMethod['id']);
+      Navigator.pop(context, jsonEncode(paymentMethod));
       return;
     }
   }
