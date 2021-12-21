@@ -35,7 +35,10 @@ class AddPaymentMethodScreen extends StatefulWidget {
   static const String _defaultTitle = 'Add payment method';
 
   static Route<String?> route(
-      {PaymentMethodStore? paymentMethodStore, Stripe? stripe, CardForm? form, String title = _defaultTitle}) {
+      {PaymentMethodStore? paymentMethodStore,
+      Stripe? stripe,
+      CardForm? form,
+      String title = _defaultTitle}) {
     return MaterialPageRoute(
       builder: (context) => AddPaymentMethodScreen(
         paymentMethodStore: paymentMethodStore,
@@ -48,7 +51,11 @@ class AddPaymentMethodScreen extends StatefulWidget {
 
   /// Add a payment method using a Stripe Setup Intent
   AddPaymentMethodScreen(
-      {Key? key, PaymentMethodStore? paymentMethodStore, Stripe? stripe, CardForm? form, this.title = _defaultTitle})
+      {Key? key,
+      PaymentMethodStore? paymentMethodStore,
+      Stripe? stripe,
+      CardForm? form,
+      this.title = _defaultTitle})
       : _form = form ?? CardForm(),
         _paymentMethodStore = paymentMethodStore ?? PaymentMethodStore.instance,
         _stripe = stripe ?? Stripe.instance,
@@ -66,7 +73,8 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
 
   @override
   void initState() {
-    if (widget.createSetupIntent != null) setupIntentFuture = widget.createSetupIntent!();
+    if (widget.createSetupIntent != null)
+      setupIntentFuture = widget.createSetupIntent!();
     _cardData = widget._form.card;
     _formKey = widget._form.formKey;
     super.initState();
@@ -93,8 +101,52 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         ),
         body: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               widget._form,
+              const Text(
+                '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
+                style: TextStyle(
+                    color: Color(0xff6b6565),
+                    fontWeight: FontWeight.w300,
+                    fontSize: 14.0),
+              ),
+              // Information 3 digit code on the back of the card
+              // Set as default payment method, toggle
+              // Add Card Button
+              ConstrainedBox(
+                constraints: BoxConstraints.tightFor(
+                    width: MediaQuery.of(context).size.width, height: 50),
+                child: ElevatedButton(
+                  child: const Text(
+                    'Add Card',
+                    style: TextStyle(
+                        color: Color(0xffffffff),
+                        // fontFamily: headingText,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18),
+                  ),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xff223039)),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xff223039)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            side: BorderSide(color: Colors.transparent))),
+                  ),
+                  onPressed: () async {
+                    final formState = _formKey.currentState;
+                    if (formState?.validate() ?? false) {
+                      formState!.save();
+
+                      await _createPaymentMethod(context, _cardData);
+                    }
+                  },
+                ),
+              ),
+
               if (StripeUiOptions.showTestPaymentMethods)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -119,31 +171,38 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   Widget _createTestCardButton(String number) {
     return OutlinedButton(
         child: Text(number.substring(number.length - 4)),
-        onPressed: () =>
-            _createPaymentMethod(context, StripeCard(number: number, cvc: "123", expMonth: 1, expYear: 2030)));
+        onPressed: () => _createPaymentMethod(
+            context,
+            StripeCard(
+                number: number, cvc: "123", expMonth: 1, expYear: 2030)));
   }
 
-  Future<void> _createPaymentMethod(BuildContext context, StripeCard cardData) async {
+  Future<void> _createPaymentMethod(
+      BuildContext context, StripeCard cardData) async {
     showProgressDialog(context);
-    var paymentMethod = await widget._stripe.api.createPaymentMethodFromCard(cardData);
+    var paymentMethod =
+        await widget._stripe.api.createPaymentMethodFromCard(cardData);
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
-      final confirmedSetupIntent = await widget._stripe
-          .confirmSetupIntent(initialSetupIntent.clientSecret, paymentMethod['id'], context: context);
+      final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
+          initialSetupIntent.clientSecret, paymentMethod['id'],
+          context: context);
       hideProgressDialog(context);
 
       if (confirmedSetupIntent['status'] == 'succeeded') {
         /// A new payment method has been attached, so refresh the store.
         await widget._paymentMethodStore.refresh();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Payment method successfully added.")));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Payment method successfully added.")));
         Navigator.pop(context, jsonEncode(paymentMethod));
         return;
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Authentication failed, please try again.")));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Authentication failed, please try again.")));
       }
     } else {
-      paymentMethod = await (widget._paymentMethodStore.attachPaymentMethod(paymentMethod['id']));
+      paymentMethod = await (widget._paymentMethodStore
+          .attachPaymentMethod(paymentMethod['id']));
       hideProgressDialog(context);
       Navigator.pop(context, jsonEncode(paymentMethod));
       return;
