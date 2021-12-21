@@ -105,6 +105,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           padding: EdgeInsets.symmetric(horizontal: widget.viewPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               widget._form,
               const Align(
