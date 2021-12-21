@@ -96,7 +96,8 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           backgroundColor: const Color(0xff223039),
           foregroundColor: const Color(0xff223039),
           leading: const Icon(
-            Icons.arrow_back
+            Icons.arrow_back,
+            color: Colors.white,
           ),
           title: widget.headerText,
         ),
@@ -106,47 +107,53 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               widget._form,
-              const Text(
-                '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color(0xff6b6565),
-                    fontWeight: FontWeight.w300,
-                    fontSize: 14.0),
+              const Align(
+              alignment: Alignment.centerLeft,
+                child: Text(
+                  '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                      color: Color(0xff6b6565),
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14.0),
+                ),
               ),
               // Information 3 digit code on the back of the card
               // Set as default payment method, toggle
               // Add Card Button
-              ConstrainedBox(
-                constraints: BoxConstraints.tightFor(
-                    width: MediaQuery.of(context).size.width, height: 50),
-                child: ElevatedButton(
-                  child: const Text(
-                    'Add Card',
-                    style: TextStyle(
-                        color: Color(0xffffffff),
-                        // fontFamily: headingText,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18),
+              Padding(
+              padding: const EdgeInsets.only(top: 25),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints.tightFor(
+                      width: MediaQuery.of(context).size.width, height: 50),
+                  child: ElevatedButton(
+                    child: const Text(
+                      'Add Card',
+                      style: TextStyle(
+                          color: Color(0xffffffff),
+                          // fontFamily: headingText,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18),
+                    ),
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xff223039)),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Color(0xff223039)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              side: BorderSide(color: Colors.transparent))),
+                    ),
+                    onPressed: () async {
+                      final formState = _formKey.currentState;
+                      if (formState?.validate() ?? false) {
+                        formState!.save();
+              
+                        await _createPaymentMethod(context, _cardData);
+                      }
+                    },
                   ),
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xff223039)),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xff223039)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            side: BorderSide(color: Colors.transparent))),
-                  ),
-                  onPressed: () async {
-                    final formState = _formKey.currentState;
-                    if (formState?.validate() ?? false) {
-                      formState!.save();
-
-                      await _createPaymentMethod(context, _cardData);
-                    }
-                  },
                 ),
               ),
 
