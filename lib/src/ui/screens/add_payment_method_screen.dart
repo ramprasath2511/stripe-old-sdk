@@ -108,19 +108,8 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               widget._form,
-              const Align(
-              alignment: Alignment.centerLeft,
-                child: Text(
-                  '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: Color(0xff6b6565),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 14.0),
-                ),
-              ),
-              // Information 3 digit code on the back of the card
               // Set as default payment method, toggle
+              
               // Add Card Button
               Padding(
               padding: const EdgeInsets.only(top: 25),
