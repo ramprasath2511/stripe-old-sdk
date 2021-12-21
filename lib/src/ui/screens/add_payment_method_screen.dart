@@ -109,40 +109,43 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             children: [
               widget._form,
               // Set as default payment method, toggle
-              
+
               // Add Card Button
-              Padding(
-              padding: const EdgeInsets.only(top: 25),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints.tightFor(
-                      width: MediaQuery.of(context).size.width, height: 50),
-                  child: ElevatedButton(
-                    child: const Text(
-                      'Add Card',
-                      style: TextStyle(
-                          color: Color(0xffffffff),
-                          // fontFamily: headingText,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                padding: const EdgeInsets.only(top: 25),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints.tightFor(
+                        width: MediaQuery.of(context).size.width, height: 50),
+                    child: ElevatedButton(
+                      child: const Text(
+                        'Add Card',
+                        style: TextStyle(
+                            color: Color(0xffffffff),
+                            // fontFamily: headingText,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18),
+                      ),
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xff223039)),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xff223039)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                side: BorderSide(color: Colors.transparent))),
+                      ),
+                      onPressed: () async {
+                        final formState = _formKey.currentState;
+                        if (formState?.validate() ?? false) {
+                          formState!.save();
+                
+                          await _createPaymentMethod(context, _cardData);
+                        }
+                      },
                     ),
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xff223039)),
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xff223039)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                              side: BorderSide(color: Colors.transparent))),
-                    ),
-                    onPressed: () async {
-                      final formState = _formKey.currentState;
-                      if (formState?.validate() ?? false) {
-                        formState!.save();
-              
-                        await _createPaymentMethod(context, _cardData);
-                      }
-                    },
                   ),
                 ),
               ),
