@@ -34,17 +34,23 @@ class AddPaymentMethodScreen extends StatefulWidget {
   final String title;
   static const String _defaultTitle = 'Add payment method';
 
+  final Text headerText;
+  final double viewPadding;
   static Route<String?> route(
       {PaymentMethodStore? paymentMethodStore,
       Stripe? stripe,
       CardForm? form,
-      String title = _defaultTitle}) {
+      String title = _defaultTitle,
+      Text? headerText,
+      double? viewPadding}) {
     return MaterialPageRoute(
       builder: (context) => AddPaymentMethodScreen(
         paymentMethodStore: paymentMethodStore,
         stripe: stripe,
         form: form,
         title: title,
+        headerText: headerText,
+        viewPadding: viewPadding
       ),
     );
   }
@@ -55,10 +61,13 @@ class AddPaymentMethodScreen extends StatefulWidget {
       PaymentMethodStore? paymentMethodStore,
       Stripe? stripe,
       CardForm? form,
-      this.title = _defaultTitle})
+      this.title = _defaultTitle,
+      Text? headerText, double? viewPadding})
       : _form = form ?? CardForm(),
         _paymentMethodStore = paymentMethodStore ?? PaymentMethodStore.instance,
         _stripe = stripe ?? Stripe.instance,
+        headerText = headerText ?? Text(title),
+        viewPadding = viewPadding ?? 10,
         super(key: key);
 
   @override
@@ -84,28 +93,22 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                final formState = _formKey.currentState;
-                if (formState?.validate() ?? false) {
-                  formState!.save();
-                  print('Lastest package');
-                  await _createPaymentMethod(context, _cardData);
-                }
-              },
-            )
-          ],
+          backgroundColor: const Color(0xff223039),
+          foregroundColor: const Color(0xff223039),
+          leading: const Icon(
+            Icons.arrow_back
+          ),
+          title: widget.headerText,
         ),
         body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: widget.viewPadding),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               widget._form,
               const Text(
                 '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
+                textAlign: TextAlign.left,
                 style: TextStyle(
                     color: Color(0xff6b6565),
                     fontWeight: FontWeight.w300,
