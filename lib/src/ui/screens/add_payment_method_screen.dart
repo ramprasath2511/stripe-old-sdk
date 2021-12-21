@@ -101,16 +101,16 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           ),
           title: widget.headerText,
         ),
-        body: Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: widget.viewPadding),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: widget.viewPadding),
+          child: Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 widget._form,
                 // Set as default payment method, toggle
-        
+          
                 // Add Card Button
                 Align(
                   alignment: Alignment.bottomCenter,
@@ -150,7 +150,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                     ),
                   ),
                 ),
-        
+          
                 if (StripeUiOptions.showTestPaymentMethods)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
