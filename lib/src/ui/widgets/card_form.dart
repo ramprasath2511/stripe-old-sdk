@@ -150,7 +150,19 @@ class _CardFormState extends State<CardForm> {
                         ),
                       ),
                     ),
-                    _getPostalCodeField(),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                        child: Text(
+                          '3 digit code on the back of the card, Amex: 4 digit on the front of the card. ',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              color: Color(0xff6b6565),
+                              fontWeight: FontWeight.w300,
+                              fontSize: 14.0),
+                        ),
+                      ),
+                      
+                    // _getPostalCodeField(),
                   ],
                 ),
               ),
