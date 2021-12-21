@@ -92,7 +92,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                 final formState = _formKey.currentState;
                 if (formState?.validate() ?? false) {
                   formState!.save();
-
+                  print('Lastest package');
                   await _createPaymentMethod(context, _cardData);
                 }
               },
