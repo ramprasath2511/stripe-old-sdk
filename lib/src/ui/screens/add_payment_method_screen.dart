@@ -95,9 +95,14 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         appBar: AppBar(
           backgroundColor: const Color(0xff223039),
           foregroundColor: const Color(0xff223039),
-          leading: const Icon(
-            Icons.arrow_back,
-            color: Colors.white,
+          leading: IconButton(
+            onPressed: () => {
+              Navigator.maybePop(context)
+            },
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
           ),
           title: widget.headerText,
         ),
