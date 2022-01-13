@@ -201,8 +201,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
       if (confirmedSetupIntent['status'] == 'succeeded') {
         /// A new payment method has been attached, so refresh the store.
         await widget._paymentMethodStore.refresh();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Payment method successfully added.")));
+        print('Payment method successfully added');
         Navigator.pop(context, jsonEncode(paymentMethod));
         return;
       } else {

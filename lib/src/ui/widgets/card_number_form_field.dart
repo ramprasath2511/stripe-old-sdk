@@ -55,7 +55,7 @@ class _CardNumberFormFieldState extends State<CardNumberFormField> {
       onChanged: widget.onChanged,
       decoration: widget.decoration,
       style: widget.textStyle,
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.phone,
       textInputAction: TextInputAction.next,
     );
   }
