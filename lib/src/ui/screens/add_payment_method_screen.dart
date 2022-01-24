@@ -192,27 +192,38 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         await widget._stripe.api.createPaymentMethodFromCard(cardData);
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
+      try {
       final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
           initialSetupIntent.clientSecret, paymentMethod['id'],
           context: context);
-      hideProgressDialog(context);
-
-      if (confirmedSetupIntent['status'] == 'succeeded') {
-        /// A new payment method has been attached, so refresh the store.
-        await widget._paymentMethodStore.refresh();
-        print('Payment method successfully added');
-        Navigator.pop(context, jsonEncode(paymentMethod));
-        return;
-      } else {
+        if (confirmedSetupIntent['status'] == 'succeeded') {
+          /// A new payment method has been attached, so refresh the store.
+          await widget._paymentMethodStore.refresh();
+          print('Payment method successfully added');
+          Navigator.pop(context, jsonEncode(paymentMethod));
+          return;
+        } else {
+          Map<String, dynamic> errorData = {
+            'error': true,
+            'message': 'Authentication failed'
+          };
+          print('Card auth failed');
+          Navigator.pop(context, errorData);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Authentication failed, please try again.")));
+        }
+      } catch (e) {
         Map<String, dynamic> errorData = {
-          'error' : true,
-          'message' : 'Authentication failed'
+          'error': true,
+          'message': 'Authentication failed'
         };
         print('Card auth failed');
         Navigator.pop(context, errorData);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Authentication failed, please try again.")));
+        print(e.toString());
       }
+      hideProgressDialog(context);
     } else {
       paymentMethod = await (widget._paymentMethodStore
           .attachPaymentMethod(paymentMethod['id']));
