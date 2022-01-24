@@ -147,7 +147,6 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                         final formState = _formKey.currentState;
                         if (formState?.validate() ?? false) {
                           formState!.save();
-                
                           await _createPaymentMethod(context, _cardData);
                         }
                       },
@@ -205,6 +204,11 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         Navigator.pop(context, jsonEncode(paymentMethod));
         return;
       } else {
+        Map<String, dynamic> errorData = {
+          'error' : true,
+          'message' : 'Authentication failed'
+        };
+        Navigator.pop(context, errorData);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Authentication failed, please try again.")));
       }
