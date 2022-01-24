@@ -208,6 +208,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           'error' : true,
           'message' : 'Authentication failed'
         };
+        print('Card auth failed');
         Navigator.pop(context, errorData);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Authentication failed, please try again.")));
