@@ -8,5 +8,6 @@ Future<bool?> showProgressDialog(BuildContext context) {
   return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()));
+      builder: (context) => const Center(child: CircularProgressIndicator())
+      );
 }
