@@ -219,7 +219,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         };
         print('Card auth failed');
         hideProgressDialog(context);
-        Navigator.pop(context, errorData);
+        // Navigator.pop(context, errorData);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Authentication failed, please try again.")));
         print(e.toString());
