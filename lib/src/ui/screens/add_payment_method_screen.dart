@@ -192,14 +192,19 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         await widget._stripe.api.createPaymentMethodFromCard(cardData);
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
-      try {
+      // try {
       final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
           initialSetupIntent.clientSecret, paymentMethod['id'],
           context: context);
         if (confirmedSetupIntent['status'] == 'succeeded') {
           /// A new payment method has been attached, so refresh the store.
+
+          /*
+          flutter: Payment method successfully added
+          flutter: Card auth failed
+          */
           await widget._paymentMethodStore.refresh();
-          print('Payment method successfully added');
+          debugPrint('Payment method successfully added');
           Navigator.pop(context, jsonEncode(paymentMethod));
           return;
         } else {
@@ -207,30 +212,34 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             'error': true,
             'message': 'Authentication failed'
           };
-          print('Card auth failed');
+          debugPrint('Card auth failed');
           Navigator.pop(context, errorData);
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Authentication failed, please try again.")));
-        }
-      } catch (e) {
+        // }
+      /*} catch (e) {
         Map<String, dynamic> errorData = {
           'error': true,
           'message': 'Authentication failed'
         };
-        print('Card auth failed');
+        debugPrint('Card auth failed');
         // hideProgressDialog(context);
         // Navigator.pop(context, errorData);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Authentication failed, please try again.")));
-        print(e.toString());
+        debugPrint(e.toString());
       }
       hideProgressDialog(context);
-    } else {
-      paymentMethod = await (widget._paymentMethodStore
-          .attachPaymentMethod(paymentMethod['id']));
-      hideProgressDialog(context);
-      Navigator.pop(context, jsonEncode(paymentMethod));
-      return;
-    }
+    } */
+        // }
+    // else {
+    //   paymentMethod = await (widget._paymentMethodStore
+    //       .attachPaymentMethod(paymentMethod['id']));
+    //   hideProgressDialog(context);
+    //   Navigator.pop(context, jsonEncode(paymentMethod));
+    //   return;
+    // }
   }
 }
+      }}
+      
