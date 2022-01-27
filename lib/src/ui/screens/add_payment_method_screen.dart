@@ -215,6 +215,8 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
       }
       catch(e) {
         Navigator.pop(context, false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(e.toString())));
         print(e.toString());
       }
       /*} catch (e) {
