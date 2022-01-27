@@ -188,26 +188,21 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   Future<void> _createPaymentMethod(
       BuildContext context, StripeCard cardData) async {
     showProgressDialog(context);
-    var paymentMethod =
-        await widget._stripe.api.createPaymentMethodFromCard(cardData);
+    var paymentMethod = await widget._stripe.api.createPaymentMethodFromCard(cardData);
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
-      // try {
+      try {
       final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
           initialSetupIntent.clientSecret, paymentMethod['id'],
           context: context);
         if (confirmedSetupIntent['status'] == 'succeeded') {
           /// A new payment method has been attached, so refresh the store.
-
-          /*
-          flutter: Payment method successfully added
-          flutter: Card auth failed
-          */
           await widget._paymentMethodStore.refresh();
           debugPrint('Payment method successfully added');
           Navigator.pop(context, jsonEncode(paymentMethod));
           return;
-        } else {
+        } 
+        else {
           Map<String, dynamic> errorData = {
             'error': true,
             'message': 'Authentication failed'
@@ -216,7 +211,12 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           Navigator.pop(context, errorData);
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Authentication failed, please try again.")));
-        // }
+        }
+      }
+      catch(e) {
+        Navigator.pop(context, false);
+        print(e.toString());
+      }
       /*} catch (e) {
         Map<String, dynamic> errorData = {
           'error': true,
@@ -239,7 +239,6 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     //   Navigator.pop(context, jsonEncode(paymentMethod));
     //   return;
     // }
-  }
 }
       }}
       
