@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:stripe_sdk/src/ui/stores/payment_method_store.dart';
 
 import '../../models/card.dart';
@@ -214,9 +215,13 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
         }
       }
       catch(e) {
-        Navigator.pop(context, false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(e.toString())));
+        SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+          Navigator.maybePop(context, false);  
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+            e.toString())
+          ));
         debugPrint(e.toString());
       }
       /*} catch (e) {
