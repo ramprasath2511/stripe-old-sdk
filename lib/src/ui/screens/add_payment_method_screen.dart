@@ -189,7 +189,20 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   Future<void> _createPaymentMethod(
       BuildContext context, StripeCard cardData) async {
     showProgressDialog(context);
-    var paymentMethod = await widget._stripe.api.createPaymentMethodFromCard(cardData);
+    var paymentMethod;
+    try {
+      paymentMethod = await widget._stripe.api.createPaymentMethodFromCard(cardData);
+    }
+    catch(e) {
+      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+          Navigator.maybePop(context, false);  
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(
+            e.toString())
+          ));
+        debugPrint(e.toString());
+    }
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
       try {
