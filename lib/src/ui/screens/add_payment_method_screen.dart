@@ -200,7 +200,10 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           /// A new payment method has been attached, so refresh the store.
           await widget._paymentMethodStore.refresh();
           debugPrint('Payment method successfully added');
-          Navigator.pop(context, jsonEncode(paymentMethod));
+          hideProgressDialog(context);
+          SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+            Navigator.pop(context, jsonEncode(paymentMethod));  
+          });         
           return;
         } 
         else {
