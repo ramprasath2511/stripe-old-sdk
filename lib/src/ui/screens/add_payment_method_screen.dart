@@ -46,13 +46,12 @@ class AddPaymentMethodScreen extends StatefulWidget {
       double? viewPadding}) {
     return MaterialPageRoute(
       builder: (context) => AddPaymentMethodScreen(
-        paymentMethodStore: paymentMethodStore,
-        stripe: stripe,
-        form: form,
-        title: title,
-        headerText: headerText,
-        viewPadding: viewPadding
-      ),
+          paymentMethodStore: paymentMethodStore,
+          stripe: stripe,
+          form: form,
+          title: title,
+          headerText: headerText,
+          viewPadding: viewPadding),
     );
   }
 
@@ -63,7 +62,8 @@ class AddPaymentMethodScreen extends StatefulWidget {
       Stripe? stripe,
       CardForm? form,
       this.title = _defaultTitle,
-      Text? headerText, double? viewPadding})
+      Text? headerText,
+      double? viewPadding})
       : _form = form ?? CardForm(),
         _paymentMethodStore = paymentMethodStore ?? PaymentMethodStore.instance,
         _stripe = stripe ?? Stripe.instance,
@@ -97,9 +97,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           backgroundColor: const Color(0xff223039),
           foregroundColor: const Color(0xff223039),
           leading: IconButton(
-            onPressed: () => {
-              Navigator.maybePop(context)
-            },
+            onPressed: () => {Navigator.maybePop(context)},
             icon: const Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -116,12 +114,12 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             children: [
               widget._form,
               // Set as default payment method, toggle
-          
+
               // Add Card Button
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                padding: const EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.only(top: 25),
                   child: ConstrainedBox(
                     constraints: BoxConstraints.tightFor(
                         width: MediaQuery.of(context).size.width, height: 50),
@@ -139,10 +137,13 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                             MaterialStateProperty.all<Color>(Color(0xff223039)),
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Color(0xff223039)),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                                side: BorderSide(color: Colors.transparent))),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                const RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                    side:
+                                        BorderSide(color: Colors.transparent))),
                       ),
                       onPressed: () async {
                         final formState = _formKey.currentState;
@@ -155,7 +156,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
                   ),
                 ),
               ),
-          
+
               if (StripeUiOptions.showTestPaymentMethods)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -191,54 +192,45 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     showProgressDialog(context);
     var paymentMethod;
     try {
-      paymentMethod = await widget._stripe.api.createPaymentMethodFromCard(cardData);
-    }
-    catch(e) {
+      paymentMethod =
+          await widget._stripe.api.createPaymentMethodFromCard(cardData);
+    } catch (e) {
       SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-          Navigator.maybePop(context, false);  
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(
-            e.toString())
-          ));
-        debugPrint(e.toString());
+        Navigator.maybePop(context, false);
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+      debugPrint(e.toString());
     }
     if (setupIntentFuture != null) {
       final initialSetupIntent = await setupIntentFuture!;
       try {
-      final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
-          initialSetupIntent.clientSecret, paymentMethod['id'],
-          context: context);
+        final confirmedSetupIntent = await widget._stripe.confirmSetupIntent(
+            initialSetupIntent.clientSecret, paymentMethod['id'],
+            context: context);
         if (confirmedSetupIntent['status'] == 'succeeded') {
           /// A new payment method has been attached, so refresh the store.
           await widget._paymentMethodStore.refresh();
-          debugPrint('Payment method successfully added');
           hideProgressDialog(context);
           SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-            Navigator.pop(context, jsonEncode(paymentMethod));  
-          });         
+            Navigator.pop(context, jsonEncode(paymentMethod));
+          });
           return;
-        } 
-        else {
+        } else {
           Map<String, dynamic> errorData = {
             'error': true,
             'message': 'Authentication failed'
           };
-          debugPrint('Card auth failed');
           Navigator.pop(context, errorData);
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text("Authentication failed, please try again.")));
         }
-      }
-      catch(e) {
+      } catch (e) {
         SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-          Navigator.maybePop(context, false);  
+          Navigator.maybePop(context, false);
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(
-            e.toString())
-          ));
-        debugPrint(e.toString());
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
       }
       /*} catch (e) {
         Map<String, dynamic> errorData = {
@@ -254,14 +246,15 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
       }
       hideProgressDialog(context);
     } */
-        // }
-    // else {
-    //   paymentMethod = await (widget._paymentMethodStore
-    //       .attachPaymentMethod(paymentMethod['id']));
-    //   hideProgressDialog(context);
-    //   Navigator.pop(context, jsonEncode(paymentMethod));
-    //   return;
-    // }
+      // }
+      // else {
+      //   paymentMethod = await (widget._paymentMethodStore
+      //       .attachPaymentMethod(paymentMethod['id']));
+      //   hideProgressDialog(context);
+      //   Navigator.pop(context, jsonEncode(paymentMethod));
+      //   return;
+      // }
+    }
+  }
 }
-      }}
       
