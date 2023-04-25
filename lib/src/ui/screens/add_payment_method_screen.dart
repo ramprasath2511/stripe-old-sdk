@@ -212,9 +212,14 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           /// A new payment method has been attached, so refresh the store.
           await widget._paymentMethodStore.refresh();
           hideProgressDialog(context);
-          SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
-            Navigator.pop(context, jsonEncode(paymentMethod));
-          });
+          if(jsonEncode(paymentMethod) != null) {
+            SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
+              Navigator.pop(context, jsonEncode(paymentMethod));
+            });
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Data is null ")));
+          }
           return;
         } else {
           Map<String, dynamic> errorData = {
