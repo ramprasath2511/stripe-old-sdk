@@ -28,6 +28,7 @@ class AddPaymentMethodScreen extends StatefulWidget {
   /// The payment method store used to manage payment methods.
   final PaymentMethodStore _paymentMethodStore;
 
+
   /// The card form used to collect payment method details.
   final CardForm _form;
 
@@ -63,7 +64,7 @@ class AddPaymentMethodScreen extends StatefulWidget {
       CardForm? form,
       this.title = _defaultTitle,
       Text? headerText,
-      double? viewPadding})
+      double? viewPadding,})
       : _form = form ?? CardForm(),
         _paymentMethodStore = paymentMethodStore ?? PaymentMethodStore.instance,
         _stripe = stripe ?? Stripe.instance,
@@ -78,7 +79,6 @@ class AddPaymentMethodScreen extends StatefulWidget {
 class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
   late final StripeCard _cardData;
   late final GlobalKey<FormState> _formKey;
-
   Future<IntentClientSecret>? setupIntentFuture;
 
   @override
@@ -191,6 +191,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
       BuildContext context, StripeCard cardData) async {
     showProgressDialog(context);
     var paymentMethod;
+    Result? result;
     try {
       paymentMethod =
           await widget._stripe.api.createPaymentMethodFromCard(cardData);
@@ -213,6 +214,9 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
           await widget._paymentMethodStore.refresh();
           hideProgressDialog(context);
           if(jsonEncode(paymentMethod) != null) {
+            setState(() {
+              result?.result = paymentMethod;
+            });
             SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
               Navigator.pop(context, jsonEncode(paymentMethod));
             });
@@ -220,7 +224,7 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Data is null ")));
           }
-          return;
+          return ;
         } else {
           Map<String, dynamic> errorData = {
             'error': true,
@@ -262,4 +266,9 @@ class _AddPaymentMethodScreenState extends State<AddPaymentMethodScreen> {
     }
   }
 }
-      
+
+class Result {
+  Map<String, dynamic>? result;
+
+  Result(this.result);
+}
